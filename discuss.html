@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>参与讨论 · 电脑有问必答 - 电脑问题互助问答</title>
+<meta name="description" content="加入电脑有问必答讨论区：提问电脑故障、硬件、系统问题，分享你的排查经验。评论区由 Giscus 驱动，与 GitHub Discussions 同步。">
+<meta name="keywords" content="电脑问题讨论,电脑故障提问,硬件问题求助,装机咨询,系统问题,数码问答社区">
+<meta name="robots" content="index, follow">
+<meta name="author" content="电脑有问必答">
+<link rel="canonical" href="https://youwen.cc.cd/">A
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="电脑有问必答">
+<meta property="og:title" content="参与讨论 · 电脑有问必答">
+<meta property="og:description" content="电脑问题互助讨论区：提问、回答、分享排查经验，支持 Markdown 排版与嵌套回复，管理员在线答疑。">
+<meta property="og:url" content="https://youwen.cc.cd/">
+<meta property="og:locale" content="zh_CN">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="参与讨论 · 电脑有问必答">
+<meta name="twitter:description" content="电脑问题互助讨论区，支持 Markdown 与嵌套回复。">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#0B0F14;
+  --surface:#111822;
+  --surface-2:#182231;
+  --border:rgba(148,163,184,.16);
+  --text:#E8EDF3;
+  --text-2:#94A3B8;
+  --accent:#2DD4BF;
+  --accent-2:#5EEAD4;
+  --amber:#F59E0B;
+  --danger:#F87171;
+  --radius:14px;
+  --font:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  --mono:ui-monospace,'Cascadia Code','Consolas','Menlo',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-2);text-decoration:none;}
+a:hover{text-decoration:underline;}
+img,svg{vertical-align:middle;}
+::selection{background:rgba(45,212,191,.3);}
+.container{max-width:1120px;margin:0 auto;padding:0 20px;}
+
+/* ===== 顶栏 ===== */
+.site-header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(11,15,20,.86);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.header-inner{
+  display:flex;align-items:center;gap:24px;
+  height:60px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:var(--text);}
+.brand:hover{text-decoration:none;}
+.brand-mark{
+  width:32px;height:32px;flex:none;
+  border-radius:9px;
+  background:linear-gradient(135deg,#134E4A,#2DD4BF);
+  display:flex;align-items:center;justify-content:center;
+}
+.brand-mark svg{width:18px;height:18px;stroke:#06121a;}
+.main-nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
+.main-nav a{
+  color:var(--text-2);font-size:14px;padding:6px 12px;border-radius:8px;
+}
+.main-nav a:hover{color:var(--text);background:rgba(148,163,184,.1);text-decoration:none;}
+.nav-gh{
+  display:inline-flex;align-items:center;gap:6px;
+  color:var(--text-2);font-size:13px;padding:6px 12px;border:1px solid var(--border);border-radius:999px;
+}
+.nav-gh:hover{color:var(--accent-2);border-color:rgba(45,212,191,.5);text-decoration:none;}
+
+/* ===== 讨论页 Hero ===== */
+.discuss-hero{
+  position:relative;
+  padding:48px 0 40px;
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+}
+.discuss-hero::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(148,163,184,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(148,163,184,.06) 1px,transparent 1px);
+  background-size:42px 42px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 0%,#000 40%,transparent 100%);
+          mask-image:radial-gradient(ellipse 90% 80% at 50% 0%,#000 40%,transparent 100%);
+  pointer-events:none;
+}
+.discuss-hero .container{position:relative;}
+.discuss-hero .tag{
+  font-size:13px;color:var(--accent-2);
+  letter-spacing:2px;display:block;margin-bottom:10px;
+}
+.discuss-hero h1{
+  font-size:clamp(26px,3.6vw,38px);line-height:1.25;font-weight:700;letter-spacing:.5px;
+}
+.discuss-hero h1 em{
+  font-style:normal;color:var(--accent);
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.discuss-hero p{color:var(--text-2);font-size:15px;margin-top:12px;max-width:640px;}
+.back-link{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:20px;font-size:13.5px;color:var(--text-2);
+}
+.back-link:hover{color:var(--accent-2);text-decoration:none;}
+
+/* ===== 区块通用 ===== */
+.section{padding:52px 0;border-bottom:1px solid var(--border);}
+.section:last-of-type{border-bottom:none;}
+
+/* ===== 讨论区布局 ===== */
+.discuss-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:start;}
+.howto{display:flex;flex-direction:column;gap:16px;}
+.howto-step{display:flex;gap:16px;}
+.howto-n{
+  flex:none;width:36px;height:36px;border-radius:50%;
+  background:var(--surface-2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--accent);font-size:15px;
+}
+.howto-step h3{font-size:15px;font-weight:600;}
+.howto-step p{color:var(--text-2);font-size:13.5px;margin-top:3px;line-height:1.7;}
+.giscus-wrap{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;
+}
+.giscus-wrap h3{font-size:16px;font-weight:600;margin-bottom:4px;}
+.giscus-wrap .hint{font-size:13px;color:var(--text-2);margin-bottom:16px;}
+.giscus-notice{
+  display:none;border:1px solid rgba(245,158,11,.4);background:rgba(245,158,11,.08);
+  border-radius:10px;padding:14px 16px;font-size:13px;color:#FDE68A;line-height:1.7;margin-bottom:16px;
+}
+.giscus-notice code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.25);padding:1px 6px;border-radius:5px;}
+.giscus-note{
+  margin-top:14px;font-size:12.5px;color:#64748B;line-height:1.7;
+}
+
+/* ===== 页脚 ===== */
+.site-footer{padding:36px 0 44px;}
+.footer-inner{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;}
+.site-footer .brand{font-size:15px;}
+.footer-links{display:flex;gap:18px;font-size:13px;color:var(--text-2);flex-wrap:wrap;}
+.footer-links a{color:var(--text-2);}
+.footer-links a:hover{color:var(--accent-2);}
+.copyright{margin-top:18px;font-size:12.5px;color:#64748B;}
+
+/* ===== 响应式 ===== */
+@media (max-width:900px){
+  .discuss-grid{grid-template-columns:1fr;gap:28px;}
+  .main-nav{display:none;}
+}
+@media (max-width:520px){
+  .discuss-hero{padding:38px 0 34px;}
+  .section{padding:40px 0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶栏 ===== -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="电脑有问必答首页">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6l-4 3v-3H6a2 2 0 0 1-2-2V7z"/></svg>
+      </span>
+      电脑有问必答
+    </a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="index.html#topics">问题分类</a>
+      <a href="index.html#qa">精选问答</a>
+      <a href="index.html#faq">常见问题</a>
+      <a class="nav-gh" href="https://github.com/youwencc/wen/discussions" target="_blank" rel="noopener">GitHub 讨论区</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===== 讨论页标题区 ===== -->
+  <section class="discuss-hero" aria-label="讨论区介绍">
+    <div class="container">
+      <span class="tag">DISCUSS</span>
+      <h1>参与讨论 · <em>有问必答</em></h1>
+      <p>没找到答案？在这里提问，或补充你的经验帮助他人。评论区由 Giscus 驱动，所有讨论与 GitHub Discussions 实时同步，支持 Markdown 排版与嵌套回复。</p>
+      <a class="back-link" href="index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        返回首页
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== 讨论区 ===== -->
+  <section class="section" aria-label="评论区">
+    <div class="container">
+      <div class="discuss-grid">
+        <div class="howto">
+          <div class="howto-step">
+            <span class="howto-n" aria-hidden="true">1</span>
+            <div>
+              <h3>登录 GitHub 账号</h3>
+              <p>评论使用 GitHub 账号授权登录，无需注册新账号，登录后即可发言与回应。</p>
+            </div>
+          </div>
+          <div class="howto-step">
+            <span class="howto-n" aria-hidden="true">2</span>
+            <div>
+              <h3>提问或回答</h3>
+              <p>描述清楚电脑型号、系统版本、报错信息与已尝试的步骤，回答会更快更准。</p>
+            </div>
+          </div>
+          <div class="howto-step">
+            <span class="howto-n" aria-hidden="true">3</span>
+            <div>
+              <h3>关注回复</h3>
+              <p>有人回复时会收到 GitHub 通知；好的提问与回答会整理进精选问答，帮助更多人。</p>
+            </div>
+          </div>
+          <div class="howto-step">
+            <span class="howto-n" aria-hidden="true">4</span>
+            <div>
+              <h3>管理员在线答疑</h3>
+              <p>站长的回复与置顶解答会直接显示在评论区下方，同一页面即可看到官方答复。</p>
+            </div>
+          </div>
+        </div>
+        <div class="giscus-wrap">
+          <h3>评论区</h3>
+          <p class="hint">支持 Markdown 排版与嵌套回复。所有评论公开保存在本站 GitHub 仓库的 Discussions 中。</p>
+          <div class="giscus-notice" id="giscusNotice">
+            尚未配置完整的 Giscus 参数。请先确认 <a href="https://github.com/settings/installations" target="_blank" rel="noopener">giscus 应用已安装并授权</a> 到仓库 <code>youwencc/wen</code>，再打开 <a href="https://giscus.app" target="_blank" rel="noopener">giscus.app</a> 选择该仓库生成配置，把 <code>data-category-id</code> 替换为真实值。
+          </div>
+          <div id="giscus" style="min-height:450px;">
+             <script src="https://giscus.app/client.js"
+        data-repo="youwencc/wen"
+        data-repo-id="R_kgDOURzFUA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOURzFUM4DFHG-"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+          </div>
+          <p class="giscus-note">需要登录 GitHub 账号才能发言。如遇评论区无法加载，说明 giscus 应用尚未授权到本站仓库，配置完成后刷新即可。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== 页脚 ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <a class="brand" href="index.html" aria-label="电脑有问必答首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6l-4 3v-3H6a2 2 0 0 1-2-2V7z"/></svg>
+        </span>
+        电脑有问必答
+      </a>
+      <nav class="footer-links" aria-label="页脚导航">
+        <a href="index.html">首页</a>
+        <a href="index.html#topics">问题分类</a>
+        <a href="index.html#qa">精选问答</a>
+        <a href="index.html#faq">常见问题</a>
+      </nav>
+    </div>
+    <p class="copyright">本站部署于 GitHub Pages · 评论由 Giscus 驱动 · 内容按需整理，操作前请确认设备信息与保修状态。© 2026 电脑有问必答</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Giscus 配置占位检测 ---------- */
+  var gs = document.querySelector('script[data-repo]');
+  var notice = document.getElementById('giscusNotice');
+  if (gs && notice) {
+    var cid = gs.getAttribute('data-category-id') || '';
+    if (cid.indexOf('你的') > -1 || cid.indexOf('REPO') > -1) {
+      notice.style.display = 'block';
+    }
+  }
+})();
+</script>
+</body>
+</html>
