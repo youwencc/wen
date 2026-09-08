@@ -8,7 +8,7 @@
 <meta name="keywords" content="电脑问题讨论,电脑故障提问,硬件问题求助,装机咨询,系统问题,数码问答社区">
 <meta name="robots" content="index, follow">
 <meta name="author" content="电脑有问必答">
-<link rel="canonical" href="https://youwen.cc.cd/">A
+<link rel="canonical" href="https://youwen.cc.cd/">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="电脑有问必答">
@@ -124,6 +124,13 @@ img,svg{vertical-align:middle;}
 /* ===== 区块通用 ===== */
 .section{padding:52px 0;border-bottom:1px solid var(--border);}
 .section:last-of-type{border-bottom:none;}
+.section-head{margin-bottom:28px;}
+.section-head .tag{
+  font-size:13px;color:var(--accent-2);
+  letter-spacing:2px;margin-bottom:8px;display:block;
+}
+.section-head h2{font-size:26px;font-weight:700;}
+.section-head p{color:var(--text-2);margin-top:8px;max-width:640px;}
 
 /* ===== 讨论区布局 ===== */
 .discuss-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:start;}
@@ -150,6 +157,32 @@ img,svg{vertical-align:middle;}
 .giscus-notice code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.25);padding:1px 6px;border-radius:5px;}
 .giscus-note{
   margin-top:14px;font-size:12.5px;color:#64748B;line-height:1.7;
+}
+
+/* ===== 最新讨论列表 ===== */
+.disc-list{display:flex;flex-direction:column;gap:12px;}
+.disc-item{
+  display:block;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px 18px;color:var(--text);
+  transition:border-color .15s,transform .15s;
+}
+.disc-item:hover{border-color:rgba(45,212,191,.5);transform:translateY(-1px);text-decoration:none;}
+.disc-item h3{font-size:15px;font-weight:600;line-height:1.5;word-break:break-word;}
+.disc-item p{
+  color:var(--text-2);font-size:13px;margin-top:4px;line-height:1.6;word-break:break-word;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.disc-meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--text-2);}
+.disc-meta img{width:20px;height:20px;border-radius:50%;flex:none;}
+.disc-meta .who{display:inline-flex;align-items:center;gap:6px;}
+.disc-meta .cat{
+  color:var(--accent-2);background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.25);
+  padding:0 8px;border-radius:999px;font-size:11.5px;
+}
+.disc-meta .cnt{color:var(--accent-2);}
+.disc-state{
+  padding:28px;text-align:center;color:var(--text-2);font-size:13.5px;line-height:1.7;
+  background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);
 }
 
 /* ===== 页脚 ===== */
@@ -204,6 +237,19 @@ img,svg{vertical-align:middle;}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         返回首页
       </a>
+    </div>
+  </section>
+
+  <!-- ===== 最新讨论 ===== -->
+  <section class="section" id="recent" aria-label="最新讨论">
+    <div class="container">
+      <div class="section-head">
+        <span class="tag">RECENT</span>
+        <h2>最新讨论</h2>
+        <p>来自 GitHub Discussions 的最新提问与解答，点击任意一条即可查看完整内容并参与回复。</p>
+      </div>
+      <div class="disc-list" id="discList"></div>
+      <div class="disc-state" id="discState" style="display:none;">正在加载最新讨论…</div>
     </div>
   </section>
 
@@ -304,6 +350,71 @@ img,svg{vertical-align:middle;}
     if (cid.indexOf('你的') > -1 || cid.indexOf('REPO') > -1) {
       notice.style.display = 'block';
     }
+  }
+
+  /* ---------- 最新讨论列表 ---------- */
+  var listEl = document.getElementById('discList');
+  var stateEl = document.getElementById('discState');
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function fmtTime(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) { return ''; }
+    var diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) { return '刚刚'; }
+    if (diff < 3600) { return Math.round(diff / 60) + ' 分钟前'; }
+    if (diff < 86400) { return Math.round(diff / 3600) + ' 小时前'; }
+    if (diff < 86400 * 7) { return Math.round(diff / 86400) + ' 天前'; }
+    var m = d.getMonth() + 1;
+    return d.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (d.getDate() < 10 ? '0' + d.getDate() : d.getDate());
+  }
+
+  function plainBody(md) {
+    return String(md || '')
+      .replace(/```[\s\S]*?```/g, ' ')
+      .replace(/[#>*_`~|\[\]()!\-]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  if (listEl && stateEl) {
+    fetch('https://api.github.com/repos/youwencc/wen/discussions?per_page=8')
+      .then(function (r) {
+        if (!r.ok) { throw new Error('bad status'); }
+        return r.json();
+      })
+      .then(function (arr) {
+        if (!Array.isArray(arr) || !arr.length) {
+          stateEl.style.display = 'block';
+          stateEl.textContent = '还没有讨论，来发布第一条吧。';
+          return;
+        }
+        arr.sort(function (a, b) { return new Date(b.updated_at) - new Date(a.updated_at); });
+        var html = '';
+        arr.slice(0, 5).forEach(function (d) {
+          var body = plainBody(d.body);
+          if (body.length > 90) { body = body.slice(0, 90) + '…'; }
+          html += '<a class="disc-item" href="' + esc(d.html_url) + '" target="_blank" rel="noopener">' +
+            '<h3>' + esc(d.title) + '</h3>' +
+            (body ? '<p>' + esc(body) + '</p>' : '') +
+            '<div class="disc-meta">' +
+            '<span class="who"><img src="' + esc(d.user.avatar_url) + '&s=40" alt="" loading="lazy">' + esc(d.user.login) + '</span>' +
+            '<span class="cat">' + esc(d.category.name) + '</span>' +
+            '<span class="cnt">' + d.comments + ' 条评论</span>' +
+            '<span>' + fmtTime(d.updated_at) + '</span>' +
+            '</div></a>';
+        });
+        listEl.innerHTML = html;
+      })
+      .catch(function () {
+        stateEl.style.display = 'block';
+        stateEl.textContent = '评论列表暂不可加载：本地直接打开文件时浏览器会拦截跨域请求，部署到 GitHub Pages 后即可自动显示最新讨论。';
+      });
   }
 })();
 </script>
