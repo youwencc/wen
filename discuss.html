@@ -383,18 +383,33 @@ img,svg{vertical-align:middle;}
   }
 
   if (listEl && stateEl) {
-    fetch('https://api.github.com/repos/youwencc/wen/discussions?per_page=8')
-      .then(function (r) {
-        if (!r.ok) { throw new Error('bad status'); }
-        return r.json();
-      })
-      .then(function (arr) {
-        if (!Array.isArray(arr) || !arr.length) {
-          stateEl.style.display = 'block';
-          stateEl.textContent = '还没有讨论，来发布第一条吧。';
-          return;
-        }
-        arr.sort(function (a, b) { return new Date(b.updated_at) - new Date(a.updated_at); });
+    (function () {
+      var CACHE_KEY = 'pcqna_disc_v1';
+      var CACHE_TTL = 10 * 60 * 1000; /* 10 分钟 */
+      var lastErr = null;
+
+      /* 数据源优先级：仓库静态 JSON（raw，不限流）→ jsDelivr CDN（国内可达）→ GitHub API 兜底 */
+      var sources = [
+        'https://raw.githubusercontent.com/youwencc/wen/main/discussions.json',
+        'https://cdn.jsdelivr.net/gh/youwencc/wen@main/discussions.json',
+        'https://api.github.com/repos/youwencc/wen/discussions?per_page=8'
+      ];
+
+      function readCache() {
+        try {
+          var raw = localStorage.getItem(CACHE_KEY);
+          if (!raw) { return null; }
+          var obj = JSON.parse(raw);
+          if (obj && Array.isArray(obj.data) && Date.now() - obj.t < CACHE_TTL) { return obj.data; }
+        } catch (e) {}
+        return null;
+      }
+
+      function writeCache(arr) {
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data: arr })); } catch (e) {}
+      }
+
+      function renderList(arr) {
         var html = '';
         arr.slice(0, 5).forEach(function (d) {
           var body = plainBody(d.body);
@@ -410,11 +425,51 @@ img,svg{vertical-align:middle;}
             '</div></a>';
         });
         listEl.innerHTML = html;
-      })
-      .catch(function () {
+        stateEl.style.display = 'none';
+      }
+
+      function showState(msg) {
+        listEl.innerHTML = '';
         stateEl.style.display = 'block';
-        stateEl.textContent = '评论列表暂不可加载：本地直接打开文件时浏览器会拦截跨域请求，部署到 GitHub Pages 后即可自动显示最新讨论。';
-      });
+        stateEl.textContent = msg;
+      }
+
+      function fetchJSON(url) {
+        return fetch(url, { cache: 'no-store' }).then(function (r) {
+          if (r.status === 403 || r.status === 429) { throw new Error('RATE_LIMIT'); }
+          if (!r.ok) { throw new Error('HTTP ' + r.status); }
+          return r.json();
+        });
+      }
+
+      function tryAt(i) {
+        if (i >= sources.length) {
+          showState(lastErr === 'RATE_LIMIT'
+            ? 'GitHub 接口暂时限流（匿名接口每小时 60 次已用完）。建议在仓库启用随附的 GitHub Actions 定时同步，列表将稳定显示；或稍后刷新重试。'
+            : '讨论列表暂时无法加载：请检查网络后刷新重试。若本地直接打开文件，请部署到 GitHub Pages 后访问。');
+          return;
+        }
+        fetchJSON(sources[i]).then(function (arr) {
+          if (!Array.isArray(arr) || !arr.length) {
+            showState('还没有讨论，来发布第一条吧。');
+            return;
+          }
+          arr.sort(function (a, b) { return new Date(b.updated_at) - new Date(a.updated_at); });
+          writeCache(arr);
+          renderList(arr);
+        }).catch(function (e) {
+          lastErr = (e && e.message) ? e.message : 'NET';
+          tryAt(i + 1);
+        });
+      }
+
+      var cached = readCache();
+      if (cached && cached.length) {
+        renderList(cached);
+      } else {
+        tryAt(0);
+      }
+    })();
   }
 })();
 </script>
